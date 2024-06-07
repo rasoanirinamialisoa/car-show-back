@@ -1,6 +1,7 @@
 // auth.module.ts
 import { Module } from '@nestjs/common';
 import { UserModule } from '../user/user.module';
+import { AdminModule } from '../admin/admin.module';
 import { AuthService } from './auth.service';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
@@ -13,6 +14,7 @@ import { UserService } from 'src/user/user.service';
   imports: [
     UserModule,
     PassportModule,
+    AdminModule,
     JwtModule.register({
       secret: 'yourSecretKey',
       signOptions: { expiresIn: '60m' },

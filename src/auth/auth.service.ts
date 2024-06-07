@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UserService } from '../user/user.service';
 import { SigninUserDto, SignupUserDto } from 'src/user/user.dto';
-import { User } from 'src/user/user.entity';
+import { SigninAdminDto } from 'src/admin/admin.dto';
 
 @Injectable()
 export class AuthService {
@@ -20,6 +20,15 @@ export class AuthService {
     return null;
   }
 
+  async validateAdmin(email: string, pass: string): Promise<any> {
+    const admin = await this.userService.findByEmail(email);
+    if (admin && await admin.comparePassword(pass)) {
+      const { Password, ...result } = admin;
+      return result;
+    }
+    return null;
+  }
+
   async login(userBody: SigninUserDto) {
     const user = await this.userService.findByEmail(userBody.Email);
     const payload = { email: user.Email, sub: user.id };
@@ -30,4 +39,14 @@ export class AuthService {
     const user = await this.userService.create(userBody);
     return this.login(user);
   }
+
+  async loginAdmin(adminBody: SigninAdminDto) {
+    const admin = await this.userService.findByEmail(adminBody.Email);
+    const payload = { email: admin.Email, sub: admin.id };
+    return { access_token: this.jwtService.sign(payload) };
+  }
+
+  
+
+  
 }
